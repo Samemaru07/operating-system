@@ -1,0 +1,10 @@
+# Obsidianのワークスペース状態（開いているタブやウィンドウ配置）は同期しない
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# キャッシュやインデックス（各OSで再生成されるため）
+.obsidian/cache/
+.obsidian/indexed-db/
+
+# プラグインの実行データなど
+.obsidian/plugins/*/data.json
