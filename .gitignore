@@ -8,3 +8,6 @@
 
 # プラグインの実行データなど
 .obsidian/plugins/*/data.json
+
+# レポートの中間ファイル
+report/.build

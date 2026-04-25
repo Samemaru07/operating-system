@@ -1,0 +1,350 @@
+\documentclass[a4paper,11pt,openany]{ltjsreport}
+
+% ============================================================
+% フォント設定
+% ============================================================
+\usepackage{luatexja-fontspec}
+\usepackage{lmodern}
+
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmainjfont[
+  BoldFont=Harano Aji Mincho Bold,
+  ItalicFont=Harano Aji Mincho,
+  BoldItalicFont=Harano Aji Mincho Bold
+]{Harano Aji Mincho}
+
+% ============================================================
+% レイアウト
+% ============================================================
+\usepackage[top=25mm,bottom=25mm,left=25mm,right=25mm,bindingoffset=0mm]{geometry}
+\usepackage{indentfirst}
+% \usepackage{setspace}
+% \setstretch{1.2}
+
+% ============================================================
+% 汎用パッケージ
+% ============================================================
+\usepackage{pdfpages}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[normalem]{ulem}
+\usepackage{url}
+\usepackage{float}
+\usepackage{amssymb}
+
+% ============================================================
+% 句読点変換設定 (Lua)
+% ============================================================
+\usepackage{luatexja}
+\directlua{
+  local function replace_punctuation(s)
+    s = s:gsub("、", "，")
+    s = s:gsub("。", "．")
+    return s
+  end
+  luatexbase.add_to_callback("process_input_buffer", replace_punctuation, "replace_punctuation")
+}
+
+% ============================================================
+% 表組み・図
+% ============================================================
+\usepackage{makecell}
+\usepackage{hhline}
+\usepackage{tabularray}
+\usepackage{diagbox}
+\usepackage{tikz}
+\usepackage[framemethod=TikZ]{mdframed}
+\makeatletter
+\def\caption@documentclass{standard}
+\makeatother
+\usepackage{caption}
+\usepackage{pifont}
+\usepackage{varwidth}
+
+% ============================================================
+% 見出しスタイル・カラー・コードリスト
+% ============================================================
+\usepackage{titlesec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+
+% ============================================================
+% 参考文献
+% ============================================================
+\usepackage[
+  backend=biber,
+  style=numeric,
+  sorting=none,
+  date=iso,
+  urldate=iso,
+  seconds=true,
+  bibencoding=utf8
+]{biblatex}
+\addbibresource{ref/references.bib}
+
+\DeclareFieldFormat*{title}{#1}
+\DeclareFieldFormat*{journaltitle}{#1}
+\DeclareFieldFormat*{booktitle}{#1}
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareDelimFormat{multinamedelim}{，}
+\DeclareDelimFormat{finalnamedelim}{，}
+\DefineBibliographyStrings{english}{
+  urlseen = {参照},
+}
+
+\DeclareFieldFormat[article,inproceedings,misc,online]{title}{"#1"}
+\DeclareFieldFormat[book,inbook]{title}{『#1』}
+
+\DeclareFieldFormat{edition}{#1\addthinspace ed.}
+
+% ============================================================
+% キャプション日本語化
+% ============================================================
+\captionsetup[figure]{name=図}
+\captionsetup[table]{name=表}
+\captionsetup{labelsep=colon}
+
+% ============================================================
+% 図表・数式番号形式
+% ----
+% \chapter なし（図1 形式）→ 下記ブロックをそのまま使用
+% \chapter あり（図1.1 形式）→ 下記ブロックを丸ごとコメントアウト
+% ============================================================
+\makeatletter
+\@removefromreset{section}{chapter}
+\@removefromreset{figure}{chapter}
+\@removefromreset{table}{chapter}
+\@removefromreset{equation}{chapter}
+\makeatother
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\theequation}{\arabic{equation}}
+% ============================================================
+
+% ============================================================
+% 見出しフォントサイズ・スペーシング
+% ============================================================
+\titleformat{\chapter}[block]
+  {\fontsize{16pt}{18pt}\selectfont\bfseries}
+  {第\thechapter 章\quad}
+  {0pt}{}
+\titlespacing*{\chapter}{0pt}{20pt}{15pt}
+
+\titleformat{\section}
+  {\normalsize\selectfont\bfseries}
+  {1-\thesection.\quad}
+  {0pt}{}
+\titlespacing*{\section}{0pt}{15pt}{0pt}
+
+\titleformat{\subsection}
+  {\fontsize{12pt}{14pt}\selectfont\bfseries}
+  {\thesubsection\quad}
+  {0pt}{}
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}
+  {\thesubsubsection\quad}
+  {0pt}{}
+
+\setcounter{secnumdepth}{3}
+
+% ============================================================
+% listings カラー定義
+% ============================================================
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{identifiercolor}{RGB}{7,54,66}
+\definecolor{commentcolor}{RGB}{88,110,117}
+\definecolor{framecolor}{RGB}{200,200,200}
+\definecolor{keywordcolor}{RGB}{38,139,210}
+\definecolor{builtincolor}{RGB}{133,153,0}
+\definecolor{stringcolor}{RGB}{42,161,152}
+
+% ============================================================
+% listings スタイル定義
+% ============================================================
+\lstdefinestyle{codestyle}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\linespread{1.1}\small\ttfamily\color{identifiercolor},
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{framecolor},
+  breaklines=true,
+  showstringspaces=false,
+  numbers=left,
+  xleftmargin=2em,
+  keywordstyle=\color{keywordcolor}\bfseries,
+  stringstyle=\color{stringcolor},
+  commentstyle=\color{commentcolor}\itshape,
+  numberstyle=\normalsize\color{black},
+}
+
+\lstdefinestyle{python}{
+  style=codestyle,
+  language=Python,
+  morekeywords=[2]{self,True,False,None,print,range,len,dict,list,set,zip,
+    int,str,float,max,min,open,round,tuple,Exception,ValueError,
+    FileNotFoundError,__name__},
+  keywordstyle=[2]\color{builtincolor},
+}
+
+\lstdefinestyle{cpp}{
+  style=codestyle,
+  language=C++,
+  morekeywords=[2]{
+    nullptr,bool,true,false,
+    uint8_t,uint16_t,uint32_t,
+    int8_t,int16_t,int32_t,
+    size_t,String,
+    setup,loop,
+    pinMode,digitalWrite,digitalRead,
+    analogRead,analogWrite,
+    delay,delayMicroseconds,
+    millis,micros,
+    HIGH,LOW,INPUT,OUTPUT,INPUT_PULLUP,
+    Serial,begin,print,println,write,available,read,
+    SoftwareSerial
+  },
+  keywordstyle=[2]\color{builtincolor},
+}
+
+\lstset{
+    style=python,
+    captionpos=t
+}
+
+% コードブロックの日本語化
+\renewcommand{\lstlistingname}{コード}
+\renewcommand{\lstlistlistingname}{コード一覧}
+
+% ============================================================
+% siunitx
+% ============================================================
+\sisetup{
+  detect-all,
+  mode=math
+}
+
+% ============================================================
+% hyperref
+% ============================================================
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  citecolor=black,
+  bookmarksnumbered=true,
+  pdfborder={0 0 0},
+  pdfencoding=auto,
+  pdftitle={レポート},
+  pdfauthor={中山 将吾}
+}
+
+\begin{document}
+
+\setcounter{page}{1}
+
+% ============================================================
+% 表紙（どちらか一方を有効化）
+% ============================================================
+
+% -- 指定表紙PDFを使う場合（通常はこちら） --
+% \includepdf{./cover.pdf}
+
+% -- 自作表紙を使う場合はコメントを外す --
+\begin{titlepage}
+	\vspace*{\stretch{1.0}}
+	\begin{flushright}
+		{\large 提出日: 2026年4月25日}
+	\end{flushright}
+	\vspace*{\stretch{2.3}}
+	\begin{center}
+		{\huge オペレーティングシステム} \\
+		\vspace{1cm}
+		{\huge レポート課題1 (1-1, 1-2)}
+	\end{center}
+	\vspace*{\stretch{3.0}}
+	\begin{center}
+		{\large 所属: 電子情報工学科・4年} \\
+		\vspace{0.5cm}
+		{\large 学籍番号: i231331} \\
+		\vspace{0.5cm}
+		{\large 出席番号: 33番} \\
+		\vspace{0.5cm}
+		{\large 氏名: 中山 将吾}
+	\end{center}
+	\vspace*{\stretch{1.0}}
+\end{titlepage}
+
+\section{オペレーティングシステムの構成要素を挙げ、各々の機能を説明せよ。}
+
+オペレーティングシステム (以降、OS と呼ぶ) は、ハードウェアを直接扱いにくいアプリケーションとハードウェアの間を取り持つソフトウェアである。
+OSの基本機能は、リソース管理者の機能、制御プログラムの機能、ハードウェア抽象化機能の三つに整理できる。
+リソース管理者の機能はCPUやメモリなどのハードウェアリソースと、プログラムやデータなどのソフトウェアリソースを管理する機能である。
+制御プログラムの機能はハードウェアへのアクセスを制御する機能である。
+ハードウェア抽象化機能はハードウェアごとの差異を吸収し、開発者が機種差を強く意識せずに開発できるようにする機能である。
+この抽象化はAPIとしてアプリケーションへ公開され、アプリケーションの直接的なハードウェア操作を避けることで、暴走時の影響を局所化する役割も持つ。
+
+また、OSの中核であるカーネルは次の構成要素と機能を持つ。
+
+\begin{enumerate}[label=(\arabic*)]
+	\item 割込み制御: システム内外の割込みを受け付け、対応する処理ルーチンを起動する。
+	\item 入出力制御: 各装置の入出力操作をスケジューリングし、必要に応じてバッファリングを行う。
+	\item タイマ管理: 現在時刻や経過時刻を管理し、タイムアウト通知を行う。
+	\item メモリ管理: プログラムやデータの配置を決定し、主記憶と二次記憶のデータ移動を制御する。
+	\item CPUスケジューラ: CPU状態を把握し、どのプロセスへCPUを割り当てるかを決定する。
+	\item プロセス管理: プログラムの開始・終了に合わせ、プロセスの生成と消滅を管理する。
+	\item 同期と通信制御: 複数プロセスがリソースを共有するときの整合性維持と、プロセス間通信を管理する。
+	\item ファイルシステム: ファイルを二次記憶に写像し、アクセス手段とディレクトリ管理機能を提供する。
+	\item デバイスドライバ管理: 装置ごとの制御方式の差を隠蔽しつつ、ドライバを統一的に管理する。
+\end{enumerate}
+
+アプリケーションは、これらカーネルの各機能へ安全にアクセスするため、システムコールという統一インターフェースを利用する\cite{os}。
+例えばファイル操作では、利用者が\texttt{open}や\texttt{read}等の共通命令を発行すると、OSが背後でファイルシステムやデバイスドライバを連携させて実際の入出力を制御する\cite{textbook}。
+このように各機能が適切に分担して動作することで、複数プログラムの同時実行時にもシステム全体の安定性が保たれる。
+
+実際にOSがリソースを管理する例として、Linuxでは、ハードウェアがシステムに接続された際\texttt{udev}による\texttt{/dev}配下へのデバイスファイルの動的生成や、\texttt{procfs}・\texttt{sysfs}を通じた内部情報の「ファイル」としての抽象化・公開が行われている\cite[pp. 225--226]{linux}。
+
+\section{モノリシックカーネルとマイクロカーネルの長所及び短所を述べよ。}
+
+モノリシックカーネルは、OSの主要機能をCPUのRing 0\footnote{リングプロテクションにおける最上位特権レベル。別名「特権モード」、「カーネルモード」。}で一括して実行する構成である。
+一方、マイクロカーネルは最小限の機能のみをRing 0に残し、他の機能をRing 3\footnote{リングプロテクションにおける非特権レベル。別名「非特権モード」、「ユーザモード」。}で動作する「システムサーバ」として分離する構成である。
+
+モノリシックカーネルは、機能間連携がRing 0内の直接的な関数呼び出しで完結するため、Ringの切り替えによるオーバーヘッドがなく高速に動作する。
+しかし、カーネルが巨大化してメモリを常時占有しやすく、一つの不具合がカーネル全体、ひいてはシステム全体の停止を招くリスクがある。
+この「拡張性や保守性の低さ」という伝統的な弱点を克服するため、近代的なLinuxでは必要な機能をOSの再起動なしに動的にロード・アンロードできるアーキテクチャであるLKM (Loadable Kernel Module)を採用している\cite{lkm}。
+実際に、筆者のArch Linux環境\footnote{カーネルバージョン: 6.19.8-arch1-1}において\texttt{lsmod}コマンドを実行して得られた、現在システムにロードされているモジュールの状態を示す\cite[p. 210]{linux}標準出力の抜粋を図\ref{fig:lsmod_output}に示す。
+
+\begin{figure}[H]
+	\centering
+	\begin{lstlisting}[language=bash,numbers=none]
+Module                  Size  Used by
+...
+snd_hda_codec         217088  6 snd_hda_codec_generic,snd_hda_intel,...
+nvidia              16306176  649 nvidia_uvm,nvidia_modeset
+...
+\end{lstlisting}
+	\caption{\texttt{lsmod}コマンドによるロード済みモジュールの確認}
+	\label{fig:lsmod_output}
+\end{figure}
+\vspace{-15pt}
+\noindent
+図\ref{fig:lsmod_output}より、各機能がモジュール化され依存関係に基づき動的に管理されている実態が読み取れる。
+これにより、モノリシックの高速性を維持しつつ柔軟な機能拡張を両立させている。
+
+対してマイクロカーネルは、機能をRing 3へ分離するため障害隔離に優れ、特定のサーバがダウンしてもシステム全体のクラッシュを回避できる。
+また、機能拡張時にカーネル自体の再構成が不要であり、保守性が高い。
+その反面、機能間のやり取りのたびにRingの切り替えを伴うコンテキストスイッチとIPC\footnote{IPC (Inter Process Communication): プロセス間通信のこと。}が発生するため、この通信オーバーヘッドが性能面で大きな不利となる\cite{micro-kernel}。
+したがって、両者は処理速度と安全性・保守性のどちらを優先するかというトレードオフの関係にある。
+
+具体的な事例として、初期のUNIXが純粋なモノリシックカーネル、MachやL4等がマイクロカーネルに挙げられる。
+なお、現代のWindowsやmacOS等は、両者の長所を組み合わせた「ハイブリッドカーネル」を採用している\cite{kernel}。
+
+\printbibliography[heading=subbibliography,title=参考文献]
+
+\end{document}
